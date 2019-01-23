@@ -1,4 +1,4 @@
-# godbg 🐛
+# godbg 🐛 [![Build Status](https://travis-ci.org/tylerwince/godbg.svg?branch=master)](https://travis-ci.org/tylerwince/godbg)
 
 `godbg` is an implementation of the Rust2018 builtin debugging macro `dbg`.
 
