@@ -7,8 +7,6 @@ people who are "print debuggers".
 
 `go get github.com/tylerwince/godbg`
 
-`from godbg import dbg`
-
 ## The old way:
 
 ```go
