@@ -33,6 +33,10 @@ func Dbg(exp interface{}) {
 		}
 		i++
 	}
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "error:", err)
+		return
+	}
 	switch exp.(type) {
 	case error:
 		fmt.Fprintln(os.Stderr, out)
