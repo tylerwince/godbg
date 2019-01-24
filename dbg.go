@@ -20,6 +20,7 @@ func Dbg(exp interface{}) {
 		fmt.Fprintln(os.Stderr, "Dbg: Unable to open expected file")
 		return
 	}
+	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	scanner.Split(bufio.ScanLines)
 	var out string
