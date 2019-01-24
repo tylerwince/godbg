@@ -41,16 +41,10 @@ func Dbg(exp interface{}) {
 	}
 }
 
-func reverseString(input string) string {
-	n := 0
-	rune := make([]rune, len(input))
-	for _, r := range input {
-		rune[n] = r
-		n++
+func reverseString(s string) string {
+	r := []rune(s)
+	for i, j := 0, len(r)-1; i < len(r)/2; i, j = i+1, j-1 {
+		r[i], r[j] = r[j], r[i]
 	}
-	rune = rune[0:n]
-	for i := 0; i < n/2; i++ {
-		rune[i], rune[n-1-i] = rune[n-1-i], rune[i]
-	}
-	return string(rune)
+	return string(r)
 }
