@@ -9,16 +9,16 @@ import (
 )
 
 // Dbg will print to either stderr or stdout the output of the expressed passed
-func Dbg(exp interface{}) {
+func Dbg(exp interface{}) interface{} {
 	_, file, line, ok := runtime.Caller(1)
 	if !ok {
 		fmt.Fprintln(os.Stderr, "Dbg: Unable to parse runtime caller")
-		return
+		return nil
 	}
 	f, err := os.Open(file)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Dbg: Unable to open expected file")
-		return
+		return nil
 	}
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
@@ -35,7 +35,7 @@ func Dbg(exp interface{}) {
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
-		return
+		return nil
 	}
 	switch exp.(type) {
 	case error:
@@ -43,6 +43,7 @@ func Dbg(exp interface{}) {
 	default:
 		fmt.Fprintln(os.Stdout, out)
 	}
+	return exp
 }
 
 func reverseString(s string) string {
