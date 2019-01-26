@@ -43,3 +43,12 @@ func Dbg(exp interface{}) interface{} {
 	}
 	return exp
 }
+
+func init() {
+	_, file, _, ok := runtime.Caller(1)
+	if !ok {
+		fmt.Fprintln(os.Stderr, "Dbg: Unable to get file from caller")
+	}
+	fmt.Println(file)
+
+}
