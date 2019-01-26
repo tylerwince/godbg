@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// Dbg will print to either stderr or stdout the output of the expressed passed
+// Dbg will print to either stderr or stdout the output of the expression passed
 func Dbg(exp interface{}) interface{} {
 	_, file, line, ok := runtime.Caller(1)
 	if !ok {
@@ -24,14 +24,12 @@ func Dbg(exp interface{}) interface{} {
 	scanner := bufio.NewScanner(f)
 	scanner.Split(bufio.ScanLines)
 	var out string
-	i := 1
-	for scanner.Scan() {
+	for i := 1; scanner.Scan(); i++ {
 		if i == line {
-			v := scanner.Text()[strings.Index(scanner.Text(), "(")+1 : len(scanner.Text())-strings.Index(reverseString(scanner.Text()), ")")-1]
-			out = fmt.Sprintf("[%s:%d] %s = %+v", file[len(file)-strings.Index(reverseString(file), "/"):], line, v, exp)
+			v := scanner.Text()[strings.Index(scanner.Text(), "(")+1 : strings.LastIndex(scanner.Text(), ")")]
+			out = fmt.Sprintf("[%s:%d] %s = %+v", file[strings.LastIndex(file, "/")+1:], line, v, exp)
 			break
 		}
-		i++
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
@@ -44,12 +42,4 @@ func Dbg(exp interface{}) interface{} {
 		fmt.Fprintln(os.Stdout, out)
 	}
 	return exp
-}
-
-func reverseString(s string) string {
-	r := []rune(s)
-	for i, j := 0, len(r)-1; i < len(r)/2; i, j = i+1, j-1 {
-		r[i], r[j] = r[j], r[i]
-	}
-	return string(r)
 }
