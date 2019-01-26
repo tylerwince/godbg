@@ -2,13 +2,14 @@ package godbg
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"strings"
 	"testing"
 )
 
-func TestDbg(t *testing.T) {
+func TestStdoutDbg(t *testing.T) {
 	intType := 2
 	floatType := 2.1
 	strType := "mystring"
@@ -32,16 +33,43 @@ func TestDbg(t *testing.T) {
 	w.Close()
 	out := <-outC
 
-	want := `[dbg_test.go:26] intType = 2
-[dbg_test.go:27] floatType = 2.1
-[dbg_test.go:28] strType = mystring
-[dbg_test.go:29] boolType = true
+	want := `[dbg_test.go:27] intType = 2
+[dbg_test.go:28] floatType = 2.1
+[dbg_test.go:29] strType = mystring
+[dbg_test.go:30] boolType = true
 `
 
 	if out != want {
 		t.Fail()
 	}
 }
+
+func TestStderrDbg(t *testing.T) {
+	errType := fmt.Errorf("New error")
+
+	r, w, _ := os.Pipe()
+	os.Stderr = w
+	outC := make(chan string)
+	// copy the output in a separate goroutine so printing can't block indefinitely
+	go func() {
+		var buf bytes.Buffer
+		io.Copy(&buf, r)
+		outC <- buf.String()
+	}()
+	Dbg(errType)
+
+	// back to normal state
+	w.Close()
+	out := <-outC
+
+	want := `[dbg_test.go:59] errType = New error
+`
+
+	if out != want {
+		t.Fail()
+	}
+}
+
 func BenchmarkWithReverse(b *testing.B) {
 	input := "/godbg/cmd/main.go"
 	b.ReportAllocs()
